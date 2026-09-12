@@ -17,12 +17,19 @@
 
       window.initialThemeState = {
         theme: savedTheme,
-        icon: savedTheme === "dark" ? "☀️" : "🌙",
-        label: savedTheme === "dark" ? "Light mode" : "Dark mode",
-        ariaLabel:
-          savedTheme === "dark"
+      };
+
+      window.getThemeToggleState = (theme) => {
+        const isDarkTheme = theme === "dark";
+
+        return {
+          icon: isDarkTheme ? "☀️" : "🌙",
+          label: isDarkTheme ? "Light mode" : "Dark mode",
+          ariaLabel: isDarkTheme
             ? "Switch to light mode"
             : "Switch to dark mode",
+          pressed: isDarkTheme ? "true" : "false",
+        };
       };
 
       if (savedTheme === "dark") {
@@ -37,24 +44,19 @@
       <h2>Extracurricular Activities</h2>
       <div id="header-controls">
         <button id="theme-toggle" class="icon-button" aria-label="Switch to dark mode" aria-pressed="false">
-          <span class="theme-icon" aria-hidden="true">🌙</span>
-          <span id="theme-toggle-text">Dark mode</span>
+          <span class="theme-icon" aria-hidden="true">🌓</span>
+          <span id="theme-toggle-text">Theme</span>
         </button>
         <script>
           const themeToggle = document.getElementById("theme-toggle");
           const themeToggleText = document.getElementById("theme-toggle-text");
           const themeIcon = themeToggle.querySelector(".theme-icon");
-          const initialThemeState = window.initialThemeState || {
-            icon: "🌙",
-            label: "Dark mode",
-            ariaLabel: "Switch to dark mode",
-          };
+          const initialThemeState = window.getThemeToggleState(
+            (window.initialThemeState || {}).theme
+          );
 
           themeToggle.setAttribute("aria-label", initialThemeState.ariaLabel);
-          themeToggle.setAttribute(
-            "aria-pressed",
-            initialThemeState.theme === "dark" ? "true" : "false"
-          );
+          themeToggle.setAttribute("aria-pressed", initialThemeState.pressed);
           themeToggleText.textContent = initialThemeState.label;
           themeIcon.textContent = initialThemeState.icon;
         </script>

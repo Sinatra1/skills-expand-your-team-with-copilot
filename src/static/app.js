@@ -123,20 +123,26 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function applyTheme(theme) {
     currentTheme = theme;
+    const themeState = window.getThemeToggleState
+      ? window.getThemeToggleState(theme)
+      : {
+          icon: theme === "dark" ? "☀️" : "🌙",
+          label: theme === "dark" ? "Light mode" : "Dark mode",
+          ariaLabel:
+            theme === "dark" ? "Switch to light mode" : "Switch to dark mode",
+          pressed: theme === "dark" ? "true" : "false",
+        };
 
     if (theme === "dark") {
       document.documentElement.setAttribute("data-theme", "dark");
-      themeToggleText.textContent = "Light mode";
-      themeToggle.setAttribute("aria-label", "Switch to light mode");
-      themeToggle.setAttribute("aria-pressed", "true");
-      themeIcon.textContent = "☀️";
     } else {
       document.documentElement.removeAttribute("data-theme");
-      themeToggleText.textContent = "Dark mode";
-      themeToggle.setAttribute("aria-label", "Switch to dark mode");
-      themeToggle.setAttribute("aria-pressed", "false");
-      themeIcon.textContent = "🌙";
     }
+
+    themeToggleText.textContent = themeState.label;
+    themeToggle.setAttribute("aria-label", themeState.ariaLabel);
+    themeToggle.setAttribute("aria-pressed", themeState.pressed);
+    themeIcon.textContent = themeState.icon;
   }
 
   function getSavedTheme() {
