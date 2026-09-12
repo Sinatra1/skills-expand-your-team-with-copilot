@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Mergington High School Activities</title>
     <script>
-      const savedTheme = localStorage.getItem("theme");
-      if (savedTheme === "dark") {
+      window.savedTheme = localStorage.getItem("theme");
+      if (window.savedTheme === "dark") {
         document.documentElement.setAttribute("data-theme", "dark");
       }
     </script>
@@ -17,10 +17,23 @@
       <h1>Mergington High School</h1>
       <h2>Extracurricular Activities</h2>
       <div id="header-controls">
-        <button id="theme-toggle" class="icon-button" aria-label="Switch to dark mode">
-          <span class="theme-icon" aria-hidden="true">🌙</span>
-          <span id="theme-toggle-text">Dark mode</span>
+        <button id="theme-toggle" class="icon-button" aria-label="Theme mode">
+          <span class="theme-icon" aria-hidden="true"></span>
+          <span id="theme-toggle-text"></span>
         </button>
+        <script>
+          const themeToggle = document.getElementById("theme-toggle");
+          const themeToggleText = document.getElementById("theme-toggle-text");
+          const themeIcon = themeToggle.querySelector(".theme-icon");
+          const isDarkTheme = window.savedTheme === "dark";
+
+          themeToggle.setAttribute(
+            "aria-label",
+            isDarkTheme ? "Switch to light mode" : "Switch to dark mode"
+          );
+          themeToggleText.textContent = isDarkTheme ? "Light mode" : "Dark mode";
+          themeIcon.textContent = isDarkTheme ? "☀️" : "🌙";
+        </script>
         <div id="user-controls">
           <div id="user-status">
             <button id="login-button" class="icon-button">
