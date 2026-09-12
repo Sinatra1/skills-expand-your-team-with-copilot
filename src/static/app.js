@@ -53,8 +53,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Build a shareable URL for a specific activity
   function getShareableActivityUrl(activityName) {
-    const baseUrl = `${window.location.origin}${window.location.pathname}`;
-    return `${baseUrl}?activity=${encodeURIComponent(activityName)}`;
+    const shareUrl = new URL(window.location.href);
+    shareUrl.searchParams.set("activity", activityName);
+    return shareUrl.toString();
   }
 
   // Copy helper with a fallback for browsers without clipboard API
