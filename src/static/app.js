@@ -12,6 +12,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const searchInput = document.getElementById("activity-search");
   const searchButton = document.getElementById("search-button");
   const categoryFilters = document.querySelectorAll(".category-filter");
+  const difficultyFilters = document.querySelectorAll(".difficulty-filter");
   const dayFilters = document.querySelectorAll(".day-filter");
   const timeFilters = document.querySelectorAll(".time-filter");
 
@@ -40,6 +41,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // State for activities and filters
   let allActivities = {};
   let currentFilter = "all";
+  let currentDifficulty = "all";
   let searchQuery = "";
   let currentDay = "";
   let currentTimeRange = "";
@@ -160,6 +162,23 @@ document.addEventListener("DOMContentLoaded", () => {
     if (activeTimeFilter) {
       currentTimeRange = activeTimeFilter.dataset.time;
     }
+
+    const activeDifficultyFilter = document.querySelector(
+      ".difficulty-filter.active"
+    );
+    if (activeDifficultyFilter) {
+      currentDifficulty = activeDifficultyFilter.dataset.difficulty;
+    }
+
+    updateDifficultyFilterState(currentDifficulty);
+  }
+
+  function updateDifficultyFilterState(difficulty) {
+    difficultyFilters.forEach((btn) => {
+      const isActive = btn.dataset.difficulty === difficulty;
+      btn.classList.toggle("active", isActive);
+      btn.setAttribute("aria-pressed", isActive ? "true" : "false");
+    });
   }
 
   // Function to set day filter
@@ -572,10 +591,26 @@ document.addEventListener("DOMContentLoaded", () => {
 
     Object.entries(allActivities).forEach(([name, details]) => {
       const activityType = getActivityType(name, details.description);
+      const activityDifficulty =
+        typeof details.difficulty === "string"
+          ? details.difficulty.trim().toLowerCase()
+          : "";
+      const selectedDifficulty = currentDifficulty.trim().toLowerCase();
 
       // Apply category filter
       if (currentFilter !== "all" && activityType !== currentFilter) {
         return;
+      }
+
+      // Apply difficulty filter
+      if (selectedDifficulty === "unspecified") {
+        if (activityDifficulty) {
+          return;
+        }
+      } else if (selectedDifficulty !== "all") {
+        if (activityDifficulty && activityDifficulty !== selectedDifficulty) {
+          return;
+        }
       }
 
       // Apply weekend filter if selected
@@ -770,6 +805,15 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
+  // Add event listeners to difficulty filter buttons
+  difficultyFilters.forEach((button) => {
+    button.addEventListener("click", () => {
+      currentDifficulty = button.dataset.difficulty;
+      updateDifficultyFilterState(currentDifficulty);
+      displayFilteredActivities();
+    });
+  });
+
   // Add event listeners to day filter buttons
   dayFilters.forEach((button) => {
     button.addEventListener("click", () => {
@@ -956,6 +1000,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Show message function
   function showMessage(text, type) {
+    if (type === "error") {
+      messageDiv.setAttribute("role", "alert");
+      messageDiv.setAttribute("aria-live", "assertive");
+    } else {
+      messageDiv.setAttribute("role", "status");
+      messageDiv.setAttribute("aria-live", "polite");
+    }
     messageDiv.textContent = text;
     messageDiv.className = `message ${type}`;
     messageDiv.setAttribute("aria-live", type === "error" ? "assertive" : "polite");
