@@ -53,8 +53,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Build a shareable URL for a specific activity
   function getShareableActivityUrl(activityName) {
+    const currentUrl = new URL(window.location.href);
     const shareUrl = new URL(
-      `${window.location.origin}${window.location.pathname}`
+      `${currentUrl.origin}${currentUrl.pathname}${currentUrl.hash}`
     );
     shareUrl.searchParams.set("activity", activityName);
     return shareUrl.toString();
