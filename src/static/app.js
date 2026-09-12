@@ -73,6 +73,16 @@ document.addEventListener("DOMContentLoaded", () => {
     if (activeDifficultyFilter) {
       currentDifficulty = activeDifficultyFilter.dataset.difficulty;
     }
+
+    updateDifficultyFilterState(currentDifficulty);
+  }
+
+  function updateDifficultyFilterState(difficulty) {
+    difficultyFilters.forEach((btn) => {
+      const isActive = btn.dataset.difficulty === difficulty;
+      btn.classList.toggle("active", isActive);
+      btn.setAttribute("aria-pressed", isActive ? "true" : "false");
+    });
   }
 
   // Function to set day filter
@@ -445,7 +455,7 @@ document.addEventListener("DOMContentLoaded", () => {
           return;
         }
       } else if (selectedDifficulty !== "all") {
-        if (activityDifficulty !== selectedDifficulty) {
+        if (activityDifficulty && activityDifficulty !== selectedDifficulty) {
           return;
         }
       }
@@ -643,10 +653,8 @@ document.addEventListener("DOMContentLoaded", () => {
   // Add event listeners to difficulty filter buttons
   difficultyFilters.forEach((button) => {
     button.addEventListener("click", () => {
-      difficultyFilters.forEach((btn) => btn.classList.remove("active"));
-      button.classList.add("active");
-
       currentDifficulty = button.dataset.difficulty;
+      updateDifficultyFilterState(currentDifficulty);
       displayFilteredActivities();
     });
   });
