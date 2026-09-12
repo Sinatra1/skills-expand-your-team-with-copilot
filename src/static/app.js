@@ -81,6 +81,61 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
+  // Create social share controls with DOM APIs to avoid HTML injection
+  function appendShareActions(activityCard, activityName, shareUrl) {
+    const shareActions = document.createElement("div");
+    shareActions.className = "share-actions";
+
+    const encodedShareUrl = encodeURIComponent(shareUrl);
+    const shareMessage = `Check out ${activityName} at Mergington High School!`;
+    const encodedShareMessage = encodeURIComponent(shareMessage);
+
+    const shareLinks = [
+      {
+        label: "Facebook",
+        href: `https://www.facebook.com/sharer/sharer.php?u=${encodedShareUrl}`,
+        ariaLabel: `Share ${activityName} on Facebook`,
+      },
+      {
+        label: "X",
+        href: `https://twitter.com/intent/tweet?text=${encodedShareMessage}&url=${encodedShareUrl}`,
+        ariaLabel: `Share ${activityName} on X`,
+      },
+      {
+        label: "Email",
+        href: `mailto:?subject=${encodedShareMessage}&body=${encodedShareMessage}%20${encodedShareUrl}`,
+        ariaLabel: `Share ${activityName} by email`,
+      },
+    ];
+
+    shareLinks.forEach((shareLink) => {
+      const link = document.createElement("a");
+      link.className = "share-button";
+      link.href = shareLink.href;
+      link.textContent = shareLink.label;
+      link.setAttribute("aria-label", shareLink.ariaLabel);
+
+      if (!shareLink.href.startsWith("mailto:")) {
+        link.target = "_blank";
+        link.rel = "noopener noreferrer";
+      }
+
+      shareActions.appendChild(link);
+    });
+
+    const copyButton = document.createElement("button");
+    copyButton.type = "button";
+    copyButton.className = "share-button copy-share-button";
+    copyButton.textContent = "Copy Link";
+    copyButton.setAttribute("aria-label", `Copy share link for ${activityName}`);
+    copyButton.addEventListener("click", async () => {
+      await copyShareLink(shareUrl, activityName);
+    });
+    shareActions.appendChild(copyButton);
+
+    activityCard.appendChild(shareActions);
+  }
+
   // Initialize filters from active elements
   function initializeFilters() {
     // Initialize day filter
@@ -529,10 +584,6 @@ document.addEventListener("DOMContentLoaded", () => {
     // Format the schedule using the new helper function
     const formattedSchedule = formatSchedule(details);
     const shareUrl = getShareableActivityUrl(name);
-    const encodedShareUrl = encodeURIComponent(shareUrl);
-    const shareMessage = encodeURIComponent(
-      `Check out ${name} at Mergington High School!`
-    );
 
     // Create activity tag
     const tagHtml = `
@@ -603,43 +654,6 @@ document.addEventListener("DOMContentLoaded", () => {
           </div>
         `
         }
-      </div>
-      <div class="share-actions">
-        <a
-          class="share-button"
-          href="https://www.facebook.com/sharer/sharer.php?u=${encodedShareUrl}"
-          target="_blank"
-          rel="noopener noreferrer"
-          aria-label="Share ${name} on Facebook"
-        >
-          Facebook
-        </a>
-        <a
-          class="share-button"
-          href="https://twitter.com/intent/tweet?text=${shareMessage}&url=${encodedShareUrl}"
-          target="_blank"
-          rel="noopener noreferrer"
-          aria-label="Share ${name} on X"
-        >
-          X
-        </a>
-        <a
-          class="share-button"
-          href="mailto:?subject=${shareMessage}&body=${shareMessage}%20${encodedShareUrl}"
-          aria-label="Share ${name} by email"
-        >
-          Email
-        </a>
-        <button
-          type="button"
-          class="share-button copy-share-button"
-          data-share-url="${shareUrl}"
-          data-activity="${name}"
-          aria-label="Copy share link for ${name}"
-        >
-          Copy Link
-        </button>
-      </div>
     `;
 
     // Add click handlers for delete buttons
@@ -658,15 +672,7 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     }
 
-    const copyShareButton = activityCard.querySelector(".copy-share-button");
-    if (copyShareButton) {
-      copyShareButton.addEventListener("click", async () => {
-        await copyShareLink(
-          copyShareButton.dataset.shareUrl,
-          copyShareButton.dataset.activity
-        );
-      });
-    }
+    appendShareActions(activityCard, name, shareUrl);
 
     activitiesList.appendChild(activityCard);
   }
