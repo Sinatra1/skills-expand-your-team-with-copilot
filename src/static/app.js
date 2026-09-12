@@ -53,7 +53,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Build a shareable URL for a specific activity
   function getShareableActivityUrl(activityName) {
-    const shareUrl = new URL(window.location.href);
+    const shareUrl = new URL(
+      `${window.location.origin}${window.location.pathname}`
+    );
     shareUrl.searchParams.set("activity", activityName);
     return shareUrl.toString();
   }
@@ -894,6 +896,8 @@ document.addEventListener("DOMContentLoaded", () => {
   function showMessage(text, type) {
     messageDiv.textContent = text;
     messageDiv.className = `message ${type}`;
+    messageDiv.setAttribute("aria-live", type === "error" ? "assertive" : "polite");
+    messageDiv.setAttribute("role", type === "error" ? "alert" : "status");
     messageDiv.classList.remove("hidden");
 
     // Hide message after 5 seconds
