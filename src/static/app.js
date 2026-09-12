@@ -18,7 +18,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // Authentication elements
   const themeToggle = document.getElementById("theme-toggle");
   const themeToggleText = document.getElementById("theme-toggle-text");
-  const themeIcon = themeToggle.querySelector(".theme-icon");
+  const themeIcon = themeToggle ? themeToggle.querySelector(".theme-icon") : null;
   const loginButton = document.getElementById("login-button");
   const userInfo = document.getElementById("user-info");
   const displayName = document.getElementById("display-name");
@@ -139,10 +139,12 @@ document.addEventListener("DOMContentLoaded", () => {
       document.documentElement.removeAttribute("data-theme");
     }
 
-    themeToggleText.textContent = themeState.label;
-    themeToggle.setAttribute("aria-label", themeState.ariaLabel);
-    themeToggle.setAttribute("aria-pressed", themeState.pressed);
-    themeIcon.textContent = themeState.icon;
+    if (themeToggle && themeToggleText && themeIcon) {
+      themeToggleText.textContent = themeState.label;
+      themeToggle.setAttribute("aria-label", themeState.ariaLabel);
+      themeToggle.setAttribute("aria-pressed", themeState.pressed);
+      themeIcon.textContent = themeState.icon;
+    }
   }
 
   function getSavedTheme() {
@@ -291,7 +293,9 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // Event listeners for authentication
-  themeToggle.addEventListener("click", toggleTheme);
+  if (themeToggle) {
+    themeToggle.addEventListener("click", toggleTheme);
+  }
   loginButton.addEventListener("click", openLoginModal);
   logoutButton.addEventListener("click", logout);
   closeLoginModal.addEventListener("click", closeLoginModalHandler);
