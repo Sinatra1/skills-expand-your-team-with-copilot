@@ -36,7 +36,7 @@
       <h1>Mergington High School</h1>
       <h2>Extracurricular Activities</h2>
       <div id="header-controls">
-        <button id="theme-toggle" class="icon-button" aria-label="Switch to dark mode">
+        <button id="theme-toggle" class="icon-button" aria-label="Switch to dark mode" aria-pressed="false">
           <span class="theme-icon" aria-hidden="true">🌙</span>
           <span id="theme-toggle-text">Dark mode</span>
         </button>
@@ -51,6 +51,10 @@
           };
 
           themeToggle.setAttribute("aria-label", initialThemeState.ariaLabel);
+          themeToggle.setAttribute(
+            "aria-pressed",
+            initialThemeState.theme === "dark" ? "true" : "false"
+          );
           themeToggleText.textContent = initialThemeState.label;
           themeIcon.textContent = initialThemeState.icon;
         </script>

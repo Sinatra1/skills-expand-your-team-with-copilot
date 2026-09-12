@@ -128,11 +128,13 @@ document.addEventListener("DOMContentLoaded", () => {
       document.documentElement.setAttribute("data-theme", "dark");
       themeToggleText.textContent = "Light mode";
       themeToggle.setAttribute("aria-label", "Switch to light mode");
+      themeToggle.setAttribute("aria-pressed", "true");
       themeIcon.textContent = "☀️";
     } else {
       document.documentElement.removeAttribute("data-theme");
       themeToggleText.textContent = "Dark mode";
       themeToggle.setAttribute("aria-label", "Switch to dark mode");
+      themeToggle.setAttribute("aria-pressed", "false");
       themeIcon.textContent = "🌙";
     }
   }
