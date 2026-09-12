@@ -51,6 +51,98 @@ document.addEventListener("DOMContentLoaded", () => {
     weekend: { days: ["Saturday", "Sunday"] }, // Weekend days
   };
 
+  // Build a shareable URL for a specific activity
+  function getShareableActivityUrl(activityName) {
+    const currentUrl = new URL(window.location.href);
+    const shareUrl = new URL(
+      `${currentUrl.origin}${currentUrl.pathname}${currentUrl.hash}`
+    );
+    shareUrl.searchParams.set("activity", activityName);
+    return shareUrl.toString();
+  }
+
+  // Copy helper with a fallback for browsers without clipboard API
+  async function copyShareLink(shareUrl, activityName) {
+    try {
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(shareUrl);
+      } else {
+        const tempInput = document.createElement("textarea");
+        tempInput.value = shareUrl;
+        tempInput.style.position = "fixed";
+        tempInput.style.opacity = "0";
+        document.body.appendChild(tempInput);
+        tempInput.focus();
+        tempInput.select();
+        const copySucceeded = document.execCommand("copy");
+        document.body.removeChild(tempInput);
+        if (!copySucceeded) {
+          throw new Error("Fallback clipboard copy failed");
+        }
+      }
+
+      showMessage(`Share link copied for ${activityName}!`, "success");
+    } catch (error) {
+      console.error("Error copying share link:", error);
+      showMessage("Could not copy link. Please try again.", "error");
+    }
+  }
+
+  // Create social share controls with DOM APIs to avoid HTML injection
+  function appendShareActions(activityCard, activityName, shareUrl) {
+    const shareActions = document.createElement("div");
+    shareActions.className = "share-actions";
+
+    const encodedShareUrl = encodeURIComponent(shareUrl);
+    const shareMessage = `Check out ${activityName} at Mergington High School!`;
+    const encodedShareMessage = encodeURIComponent(shareMessage);
+
+    const shareLinks = [
+      {
+        label: "Facebook",
+        href: `https://www.facebook.com/sharer/sharer.php?u=${encodedShareUrl}`,
+        ariaLabel: `Share ${activityName} on Facebook`,
+      },
+      {
+        label: "X",
+        href: `https://twitter.com/intent/tweet?text=${encodedShareMessage}&url=${encodedShareUrl}`,
+        ariaLabel: `Share ${activityName} on X`,
+      },
+      {
+        label: "Email",
+        href: `mailto:?subject=${encodedShareMessage}&body=${encodedShareMessage}%20${encodedShareUrl}`,
+        ariaLabel: `Share ${activityName} by email`,
+      },
+    ];
+
+    shareLinks.forEach((shareLink) => {
+      const link = document.createElement("a");
+      link.className = "share-button";
+      link.href = shareLink.href;
+      link.textContent = shareLink.label;
+      link.setAttribute("aria-label", shareLink.ariaLabel);
+
+      if (!shareLink.href.startsWith("mailto:")) {
+        link.target = "_blank";
+        link.rel = "noopener noreferrer";
+      }
+
+      shareActions.appendChild(link);
+    });
+
+    const copyButton = document.createElement("button");
+    copyButton.type = "button";
+    copyButton.className = "share-button copy-share-button";
+    copyButton.textContent = "Copy Link";
+    copyButton.setAttribute("aria-label", `Copy share link for ${activityName}`);
+    copyButton.addEventListener("click", async () => {
+      await copyShareLink(shareUrl, activityName);
+    });
+    shareActions.appendChild(copyButton);
+
+    activityCard.appendChild(shareActions);
+  }
+
   // Initialize filters from active elements
   function initializeFilters() {
     // Initialize day filter
@@ -498,6 +590,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Format the schedule using the new helper function
     const formattedSchedule = formatSchedule(details);
+    const shareUrl = getShareableActivityUrl(name);
 
     // Create activity tag
     const tagHtml = `
@@ -568,7 +661,6 @@ document.addEventListener("DOMContentLoaded", () => {
           </div>
         `
         }
-      </div>
     `;
 
     // Add click handlers for delete buttons
@@ -586,6 +678,8 @@ document.addEventListener("DOMContentLoaded", () => {
         });
       }
     }
+
+    appendShareActions(activityCard, name, shareUrl);
 
     activitiesList.appendChild(activityCard);
   }
@@ -803,6 +897,8 @@ document.addEventListener("DOMContentLoaded", () => {
   function showMessage(text, type) {
     messageDiv.textContent = text;
     messageDiv.className = `message ${type}`;
+    messageDiv.setAttribute("aria-live", type === "error" ? "assertive" : "polite");
+    messageDiv.setAttribute("role", type === "error" ? "alert" : "status");
     messageDiv.classList.remove("hidden");
 
     // Hide message after 5 seconds
