@@ -38,7 +38,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // State for activities and filters
   let allActivities = {};
   let currentFilter = "all";
-  let currentDifficulty = "all-levels";
+  let currentDifficulty = "unspecified";
   let searchQuery = "";
   let currentDay = "";
   let currentTimeRange = "";
@@ -440,12 +440,14 @@ document.addEventListener("DOMContentLoaded", () => {
       }
 
       // Apply difficulty filter
-      if (selectedDifficulty !== "all-levels") {
+      if (selectedDifficulty === "unspecified") {
+        if (activityDifficulty) {
+          return;
+        }
+      } else {
         if (activityDifficulty !== selectedDifficulty) {
           return;
         }
-      } else if (activityDifficulty) {
-        return;
       }
 
       // Apply weekend filter if selected
@@ -835,6 +837,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Show message function
   function showMessage(text, type) {
+    messageDiv.setAttribute("role", "status");
+    messageDiv.setAttribute("aria-live", "polite");
     messageDiv.textContent = text;
     messageDiv.className = `message ${type}`;
     messageDiv.classList.remove("hidden");
