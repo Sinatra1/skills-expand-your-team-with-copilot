@@ -38,7 +38,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // State for activities and filters
   let allActivities = {};
   let currentFilter = "all";
-  let currentDifficulty = "unspecified";
+  let currentDifficulty = "all";
   let searchQuery = "";
   let currentDay = "";
   let currentTimeRange = "";
@@ -444,7 +444,7 @@ document.addEventListener("DOMContentLoaded", () => {
         if (activityDifficulty) {
           return;
         }
-      } else {
+      } else if (selectedDifficulty !== "all") {
         if (activityDifficulty !== selectedDifficulty) {
           return;
         }
@@ -837,8 +837,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Show message function
   function showMessage(text, type) {
-    messageDiv.setAttribute("role", "status");
-    messageDiv.setAttribute("aria-live", "polite");
+    if (type === "error") {
+      messageDiv.setAttribute("role", "alert");
+      messageDiv.setAttribute("aria-live", "assertive");
+    } else {
+      messageDiv.setAttribute("role", "status");
+      messageDiv.setAttribute("aria-live", "polite");
+    }
     messageDiv.textContent = text;
     messageDiv.className = `message ${type}`;
     messageDiv.classList.remove("hidden");
