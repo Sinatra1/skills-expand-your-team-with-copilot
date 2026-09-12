@@ -218,6 +218,11 @@ section h3 {
   color: var(--primary-text);
 }
 
+.share-button:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
 /* Activity Tag */
 .activity-tag {
   position: absolute;
