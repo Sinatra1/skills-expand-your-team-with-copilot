@@ -4,21 +4,72 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Mergington High School Activities</title>
+    <script>
+      let savedTheme = "light";
+
+      try {
+        if (localStorage.getItem("theme") === "dark") {
+          savedTheme = "dark";
+        }
+      } catch (error) {
+        console.warn("Theme preference could not be loaded.", error);
+      }
+
+      window.initialThemeState = {
+        theme: savedTheme,
+      };
+
+      window.getThemeToggleState = (theme) => {
+        const isDarkTheme = theme === "dark";
+
+        return {
+          icon: isDarkTheme ? "☀️" : "🌙",
+          label: isDarkTheme ? "Light mode" : "Dark mode",
+          ariaLabel: isDarkTheme
+            ? "Switch to light mode"
+            : "Switch to dark mode",
+          pressed: isDarkTheme ? "true" : "false",
+        };
+      };
+
+      if (savedTheme === "dark") {
+        document.documentElement.setAttribute("data-theme", "dark");
+      }
+    </script>
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
     <header>
       <h1>Mergington High School</h1>
       <h2>Extracurricular Activities</h2>
-      <div id="user-controls">
-        <div id="user-status">
-          <button id="login-button" class="icon-button">
-            <span class="user-icon">👤</span>
-            <span>Login</span>
-          </button>
-          <div id="user-info" class="hidden">
-            <span id="display-name"></span>
-            <button id="logout-button">Logout</button>
+      <div id="header-controls">
+        <button id="theme-toggle" type="button" class="icon-button" aria-label="Switch to dark mode" aria-pressed="false">
+          <span class="theme-icon" aria-hidden="true">🌙</span>
+          <span id="theme-toggle-text">Dark mode</span>
+        </button>
+        <script>
+          const themeToggle = document.getElementById("theme-toggle");
+          const themeToggleText = document.getElementById("theme-toggle-text");
+          const themeIcon = themeToggle.querySelector(".theme-icon");
+          const initialThemeState = window.getThemeToggleState(
+            (window.initialThemeState || {}).theme
+          );
+
+          themeToggle.setAttribute("aria-label", initialThemeState.ariaLabel);
+          themeToggle.setAttribute("aria-pressed", initialThemeState.pressed);
+          themeToggleText.textContent = initialThemeState.label;
+          themeIcon.textContent = initialThemeState.icon;
+        </script>
+        <div id="user-controls">
+          <div id="user-status">
+            <button id="login-button" class="icon-button">
+              <span class="user-icon">👤</span>
+              <span>Login</span>
+            </button>
+            <div id="user-info" class="hidden">
+              <span id="display-name"></span>
+              <button id="logout-button">Logout</button>
+            </div>
           </div>
         </div>
       </div>

@@ -16,6 +16,9 @@ document.addEventListener("DOMContentLoaded", () => {
   const timeFilters = document.querySelectorAll(".time-filter");
 
   // Authentication elements
+  const themeToggle = document.getElementById("theme-toggle");
+  const themeToggleText = document.getElementById("theme-toggle-text");
+  const themeIcon = themeToggle ? themeToggle.querySelector(".theme-icon") : null;
   const loginButton = document.getElementById("login-button");
   const userInfo = document.getElementById("user-info");
   const displayName = document.getElementById("display-name");
@@ -43,6 +46,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Authentication state
   let currentUser = null;
+  let currentTheme = document.documentElement.getAttribute("data-theme") || "light";
 
   // Time range mappings for the dropdown
   const timeRanges = {
@@ -209,6 +213,60 @@ document.addEventListener("DOMContentLoaded", () => {
     updateAuthBodyClass();
   }
 
+  function applyTheme(theme) {
+    currentTheme = theme;
+    const themeState = window.getThemeToggleState
+      ? window.getThemeToggleState(theme)
+      : {
+          icon: theme === "dark" ? "☀️" : "🌙",
+          label: theme === "dark" ? "Light mode" : "Dark mode",
+          ariaLabel:
+            theme === "dark" ? "Switch to light mode" : "Switch to dark mode",
+          pressed: theme === "dark" ? "true" : "false",
+        };
+
+    if (theme === "dark") {
+      document.documentElement.setAttribute("data-theme", "dark");
+    } else {
+      document.documentElement.removeAttribute("data-theme");
+    }
+
+    if (themeToggle && themeToggleText && themeIcon) {
+      themeToggleText.textContent = themeState.label;
+      themeToggle.setAttribute("aria-label", themeState.ariaLabel);
+      themeToggle.setAttribute("aria-pressed", themeState.pressed);
+      themeIcon.textContent = themeState.icon;
+    }
+  }
+
+  function getSavedTheme() {
+    try {
+      return localStorage.getItem("theme");
+    } catch (error) {
+      console.warn("Theme preference could not be loaded.", error);
+      return null;
+    }
+  }
+
+  function saveTheme(theme) {
+    try {
+      localStorage.setItem("theme", theme);
+    } catch (error) {
+      console.warn("Theme preference could not be saved.", error);
+    }
+  }
+
+  function initializeTheme() {
+    const savedTheme = getSavedTheme();
+    applyTheme(savedTheme === "dark" ? "dark" : "light");
+  }
+
+  function toggleTheme() {
+    const nextTheme = currentTheme === "dark" ? "light" : "dark";
+    applyTheme(nextTheme);
+    saveTheme(nextTheme);
+  }
+
   // Validate user session with the server
   async function validateUserSession(username) {
     try {
@@ -327,6 +385,9 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // Event listeners for authentication
+  if (themeToggle) {
+    themeToggle.addEventListener("click", toggleTheme);
+  }
   loginButton.addEventListener("click", openLoginModal);
   logoutButton.addEventListener("click", logout);
   closeLoginModal.addEventListener("click", closeLoginModalHandler);
@@ -958,6 +1019,7 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   // Initialize app
+  initializeTheme();
   checkAuthentication();
   initializeFilters();
   fetchActivities();
