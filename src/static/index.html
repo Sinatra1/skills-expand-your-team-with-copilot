@@ -5,8 +5,27 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Mergington High School Activities</title>
     <script>
-      window.savedTheme = localStorage.getItem("theme");
-      if (window.savedTheme === "dark") {
+      let savedTheme = "light";
+
+      try {
+        if (localStorage.getItem("theme") === "dark") {
+          savedTheme = "dark";
+        }
+      } catch (error) {
+        console.warn("Theme preference could not be loaded.", error);
+      }
+
+      window.initialThemeState = {
+        theme: savedTheme,
+        icon: savedTheme === "dark" ? "☀️" : "🌙",
+        label: savedTheme === "dark" ? "Light mode" : "Dark mode",
+        ariaLabel:
+          savedTheme === "dark"
+            ? "Switch to light mode"
+            : "Switch to dark mode",
+      };
+
+      if (savedTheme === "dark") {
         document.documentElement.setAttribute("data-theme", "dark");
       }
     </script>
@@ -25,14 +44,15 @@
           const themeToggle = document.getElementById("theme-toggle");
           const themeToggleText = document.getElementById("theme-toggle-text");
           const themeIcon = themeToggle.querySelector(".theme-icon");
-          const isDarkTheme = window.savedTheme === "dark";
+          const initialThemeState = window.initialThemeState || {
+            icon: "🌙",
+            label: "Dark mode",
+            ariaLabel: "Switch to dark mode",
+          };
 
-          themeToggle.setAttribute(
-            "aria-label",
-            isDarkTheme ? "Switch to light mode" : "Switch to dark mode"
-          );
-          themeToggleText.textContent = isDarkTheme ? "Light mode" : "Dark mode";
-          themeIcon.textContent = isDarkTheme ? "☀️" : "🌙";
+          themeToggle.setAttribute("aria-label", initialThemeState.ariaLabel);
+          themeToggleText.textContent = initialThemeState.label;
+          themeIcon.textContent = initialThemeState.icon;
         </script>
         <div id="user-controls">
           <div id="user-status">

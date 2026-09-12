@@ -137,15 +137,32 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
+  function getSavedTheme() {
+    try {
+      return localStorage.getItem("theme");
+    } catch (error) {
+      console.warn("Theme preference could not be loaded.", error);
+      return null;
+    }
+  }
+
+  function saveTheme(theme) {
+    try {
+      localStorage.setItem("theme", theme);
+    } catch (error) {
+      console.warn("Theme preference could not be saved.", error);
+    }
+  }
+
   function initializeTheme() {
-    const savedTheme = localStorage.getItem("theme");
+    const savedTheme = getSavedTheme();
     applyTheme(savedTheme === "dark" ? "dark" : "light");
   }
 
   function toggleTheme() {
     const nextTheme = currentTheme === "dark" ? "light" : "dark";
     applyTheme(nextTheme);
-    localStorage.setItem("theme", nextTheme);
+    saveTheme(nextTheme);
   }
 
   // Validate user session with the server
