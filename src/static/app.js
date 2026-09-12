@@ -38,7 +38,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // State for activities and filters
   let allActivities = {};
   let currentFilter = "all";
-  let currentDifficulty = "";
+  let currentDifficulty = "all-levels";
   let searchQuery = "";
   let currentDay = "";
   let currentTimeRange = "";
@@ -440,7 +440,7 @@ document.addEventListener("DOMContentLoaded", () => {
       }
 
       // Apply difficulty filter
-      if (selectedDifficulty) {
+      if (selectedDifficulty !== "all-levels") {
         if (activityDifficulty !== selectedDifficulty) {
           return;
         }
