@@ -70,8 +70,11 @@ document.addEventListener("DOMContentLoaded", () => {
         document.body.appendChild(tempInput);
         tempInput.focus();
         tempInput.select();
-        document.execCommand("copy");
+        const copySucceeded = document.execCommand("copy");
         document.body.removeChild(tempInput);
+        if (!copySucceeded) {
+          throw new Error("Fallback clipboard copy failed");
+        }
       }
 
       showMessage(`Share link copied for ${activityName}!`, "success");
