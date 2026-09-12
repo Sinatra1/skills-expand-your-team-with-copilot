@@ -4,21 +4,33 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Mergington High School Activities</title>
+    <script>
+      const savedTheme = localStorage.getItem("theme");
+      if (savedTheme === "dark") {
+        document.documentElement.setAttribute("data-theme", "dark");
+      }
+    </script>
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
     <header>
       <h1>Mergington High School</h1>
       <h2>Extracurricular Activities</h2>
-      <div id="user-controls">
-        <div id="user-status">
-          <button id="login-button" class="icon-button">
-            <span class="user-icon">👤</span>
-            <span>Login</span>
-          </button>
-          <div id="user-info" class="hidden">
-            <span id="display-name"></span>
-            <button id="logout-button">Logout</button>
+      <div id="header-controls">
+        <button id="theme-toggle" class="icon-button" aria-label="Switch to dark mode">
+          <span class="theme-icon" aria-hidden="true">🌙</span>
+          <span id="theme-toggle-text">Dark mode</span>
+        </button>
+        <div id="user-controls">
+          <div id="user-status">
+            <button id="login-button" class="icon-button">
+              <span class="user-icon">👤</span>
+              <span>Login</span>
+            </button>
+            <div id="user-info" class="hidden">
+              <span id="display-name"></span>
+              <button id="logout-button">Logout</button>
+            </div>
           </div>
         </div>
       </div>

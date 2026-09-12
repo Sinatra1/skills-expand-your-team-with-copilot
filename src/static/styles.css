@@ -32,6 +32,29 @@
   --info-light: #d1ecf1;
 }
 
+[data-theme="dark"] {
+  --primary: #8fa2ff;
+  --primary-light: #b5c0ff;
+  --primary-dark: #6f86f1;
+  --primary-text: #111827;
+  --secondary: #ffb347;
+  --secondary-light: #ffc978;
+  --secondary-dark: #e08a00;
+  --secondary-text: #111827;
+  --background: #111827;
+  --surface: #1f2937;
+  --text-primary: #f9fafb;
+  --text-secondary: #d1d5db;
+  --border: #374151;
+  --border-light: #4b5563;
+  --border-focus: #6b7280;
+  --success-light: #16351f;
+  --warning-light: #4a3410;
+  --error-light: #4a1d1f;
+  --info: #9bdaf1;
+  --info-light: #133340;
+}
+
 * {
   box-sizing: border-box;
   margin: 0;
@@ -48,6 +71,7 @@ body {
   padding: 12px;
   background-color: var(--background);
   font-size: 0.9rem;
+  transition: background-color 0.2s ease, color 0.2s ease;
 }
 
 header {
@@ -85,6 +109,8 @@ section {
   border-radius: 5px;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
   width: 100%;
+  transition: background-color 0.2s ease, color 0.2s ease,
+    border-color 0.2s ease;
 }
 
 section h3 {
@@ -161,6 +187,8 @@ section h3 {
   position: relative;
   overflow: hidden;
   font-size: 0.85rem;
+  transition: all 0.3s ease, background-color 0.2s ease, color 0.2s ease,
+    border-color 0.2s ease;
 }
 
 .activity-card:hover {
@@ -203,6 +231,11 @@ section h3 {
   border-radius: 10px;
   text-transform: uppercase;
   letter-spacing: 0.3px;
+}
+
+[data-theme="dark"] .activity-tag {
+  background: #312e81;
+  color: #e0e7ff;
 }
 
 /* Capacity Indicator */
@@ -324,6 +357,11 @@ button {
   max-width: 250px;
   pointer-events: none;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+[data-theme="dark"] .tooltip .tooltip-text {
+  background-color: rgba(249, 250, 251, 0.95);
+  color: #111827;
 }
 
 .tooltip:hover .tooltip-text {
@@ -613,15 +651,18 @@ footer {
 }
 
 /* User controls in header */
-#user-controls {
-  position: absolute;
-  top: 10px;
-  right: 15px;
-}
-
 #user-status {
   display: flex;
   align-items: center;
+}
+
+#header-controls {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 
 #user-info {
@@ -654,6 +695,10 @@ footer {
   font-size: 1rem;
 }
 
+.theme-icon {
+  font-size: 1rem;
+}
+
 #logout-button {
   padding: 3px 10px;
   background-color: rgba(255, 255, 255, 0.2);
@@ -663,4 +708,23 @@ footer {
 
 #logout-button:hover {
   background-color: rgba(255, 255, 255, 0.3);
+}
+
+[data-theme="dark"] .search-box input {
+  background-color: var(--surface);
+  color: var(--text-primary);
+}
+
+[data-theme="dark"] .modal {
+  background-color: rgba(0, 0, 0, 0.7);
+}
+
+@media (max-width: 767px) {
+  #header-controls {
+    position: static;
+    margin-top: 12px;
+    width: 100%;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
 }
